@@ -1,8 +1,14 @@
 
-add_executable(Cloneable)
+add_library(Cloneable INTERFACE)
 
 target_sources(
 	Cloneable
-	PUBLIC
-	"Include/lagy/Cloneable.cpp"
+	INTERFACE
+	"Include/lagy/Cloneable.hpp"
+)
+
+target_include_directories(
+	Cloneable
+	INTERFACE
+	"Include"
 )
