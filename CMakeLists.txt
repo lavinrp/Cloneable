@@ -19,4 +19,4 @@ project ("Cloneable")
 add_subdirectory("Cloneable")
 
 #option(LAGY_BUILD_TESTS)
-#add_subdirectory ("Tests")
+add_subdirectory ("Tests")
