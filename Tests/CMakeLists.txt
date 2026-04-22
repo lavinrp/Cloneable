@@ -1,18 +1,3 @@
-# add_executable(Tests)
-
-# target_sources(
-# 	Tests
-# 	PUBLIC
-# 	"Tests/CloneableTests.cpp"
-# )
-
-# target_include_directories(
-# 	Cloneable
-# 	PUBLIC
-# 	"Include"
-# 	"Tests"
-# )
-
 include(FetchContent)
 
 FetchContent_Declare(
