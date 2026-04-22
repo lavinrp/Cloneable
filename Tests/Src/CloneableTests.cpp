@@ -1,6 +1,8 @@
 
 #include <lagy/Cloneable.hpp>
 
+#include <catch2/catch_all.hpp>
+
 #include <memory>
 
 // TEST CODE
@@ -41,6 +43,8 @@ namespace lagyTest {
 		DiamondDerived() = default;
 		~DiamondDerived() override = default;
 
+		// TODO: Add explicit tests with and without this.
+		using Cloneable<Base>::Clone;
 		DiamondDerived* DoClone(lagy::Cloneable<Base>::CloneTag) const override {
 			return new DiamondDerived(*this);
 		}
@@ -54,27 +58,46 @@ namespace lagyTest {
 	};
 }
 
-
-int main()
+TEST_CASE("SimpleClone")
 {
+	std::unique_ptr<lagyTest::Derived> orig = std::make_unique<lagyTest::Derived>();
 
-	// Validate that Clone can return a unique_ptr<Derived>
-	{
-		std::unique_ptr<lagyTest::Derived> orig = std::make_unique<lagyTest::Derived>();
-		std::unique_ptr<lagyTest::Derived> clone = orig->Clone();
+	std::unique_ptr<lagyTest::Derived> clone = orig->Clone();
+}
 
-		// CloneAs
-		std::unique_ptr<lagyTest::Base> clonedAsBase = orig->Cloneable::CloneAs<lagyTest::Base>();
-	}
-	
-	
-	// Validate that the diamond inheritance problem is solved
-	{
-		std::unique_ptr<lagyTest::DiamondDerived> orig = std::make_unique<lagyTest::DiamondDerived>();
-		std::unique_ptr<lagyTest::DiamondDerived> clone = orig->Cloneable<lagyTest::Base>::Clone();
-		std::unique_ptr<lagyTest::DiamondDerived> cloneDeduced = orig->Cloneable::Clone();
 
-		// CloneAs
-		std::unique_ptr<lagyTest::Base> clonedAsBase = orig->Cloneable::CloneAs<lagyTest::Base>();
-	}
+TEST_CASE("DiamondClone")
+{
+	std::unique_ptr<lagyTest::DiamondDerived> orig = std::make_unique<lagyTest::DiamondDerived>();
+
+	std::unique_ptr<lagyTest::DiamondDerived> cloneDeduced = orig->Clone();
+	//std::unique_ptr<lagyTest::DiamondDerived> cloneDeduced = orig->Cloneable::Clone();
+	std::unique_ptr<lagyTest::DiamondDerived> clone = orig->Cloneable<lagyTest::Base>::Clone();
+	std::unique_ptr<lagyTest::DiamondDerived> clone2 = orig->Cloneable<lagyTest::Base2>::Clone();
+}
+
+
+
+TEST_CASE("SimpleCloneAs")
+{
+	std::unique_ptr<lagyTest::Derived> orig = std::make_unique<lagyTest::Derived>();
+
+	std::unique_ptr<lagyTest::Base> clonedAsBase = orig->CloneAs<lagyTest::Base>();
+
+	// TODO: Handle Negative Tests
+	// std::unique_ptr<lagyTest::Derived> clonedBaseAsDerived = clonedAsBase->CloneAs<lagyTest::Derived>();
+}
+
+TEST_CASE("DiamondCloneAs")
+{
+	std::unique_ptr<lagyTest::DiamondDerived> orig = std::make_unique<lagyTest::DiamondDerived>();
+
+	std::unique_ptr<lagy::Cloneable<lagyTest::Base>> clonedAsCloneable = orig->Cloneable::CloneAs<lagy::Cloneable<lagyTest::Base>>();
+	std::unique_ptr<lagyTest::Base> clonedAsBase = orig->Cloneable::CloneAs<lagyTest::Base>();
+	std::unique_ptr<lagyTest::Base2> clonedAsBase2 = orig->Cloneable::CloneAs<lagyTest::Base2>();
+	std::unique_ptr<lagyTest::DiamondDerived> clonedAsDerived = orig->Cloneable::CloneAs<lagyTest::DiamondDerived>();
+
+	// TODO: Handle Negative Tests
+	// std::unique_ptr<lagyTest::DiamondDerived> clonedBaseAsDerived = clonedAsBase->Cloneable::CloneAs<lagyTest::DiamondDerived>();
+	// std::unique_ptr<lagyTest::Base> clonedBase2AsBase = clonedAsBase2->Cloneable::CloneAs<lagyTest::Base>();
 }

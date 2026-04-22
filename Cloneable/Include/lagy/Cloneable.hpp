@@ -59,23 +59,23 @@ namespace lagy {
 
 		
 		// TODO: Add concepts for validation that T has a DoClone? that returns the appropriate type "T*"
-		
+		/*
 		// Option 1: Works. Uses this pointer.
 		template <typename Target>
 			requires std::derived_from<Target, std::remove_reference_t<decltype(*this)>> || std::same_as<CrtpBase, Target>
 		std::unique_ptr<Target> CloneAs()
 		{
 			return std::unique_ptr<Target>{static_cast<Target*>(this->DoClone(CloneTag{}))};
-		}
+		}*/
 
-		/*
+		
 		// Option 2: Uses deduce this.
 		template <typename Target, typename Self>
+			requires std::is_base_of_v<Target, std::remove_cvref_t<Self>>
 		std::unique_ptr<Target> CloneAs(this Self&& self)
 		{
-			static_assert(std::is_base_of_v<Target, std::remove_cvref_t<Self>>, "Target must be a base of the object type.");
 			return std::unique_ptr<Target>{static_cast<Target*>(self.DoClone(CloneTag{}))};
 		}
-		*/
+		
 	};
 }
