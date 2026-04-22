@@ -1,4 +1,3 @@
-#pragma once
 
 #include <lagy/Cloneable.hpp>
 
@@ -54,6 +53,7 @@ namespace lagyTest {
 		}
 	};
 }
+
 
 int main()
 {
